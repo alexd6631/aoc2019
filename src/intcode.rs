@@ -12,20 +12,35 @@ impl IntcodeCpu {
 
 impl IntcodeCpu {
     fn next(&mut self) -> bool {
-        let pc = self.pc;
-        let opcode = self.memory[pc];
-        self.pc = pc + 4;
+        macro_rules! write_indirect {
+            ($x: expr, $val: expr) => {{
+                let temp = self.memory[$x] as usize;
+                self.memory[temp] = $val
+            }};
+        }
 
-        let in_a = self.memory[pc + 1] as usize;
-        let in_b = self.memory[pc + 2] as usize;
-        let out = self.memory[pc + 3] as usize;
+        macro_rules! read_indirect {
+            ($x: expr) => { {
+                let temp = self.memory[$x] as usize;
+                self.memory[temp]
+            }};
+        }
+
+        macro_rules! arith_instruction {
+            ($sym: tt) => {
+                write_indirect!(self.pc + 3, read_indirect!(self.pc + 1) $sym read_indirect!(self.pc + 2));
+                self.pc += 4;
+            }
+        }
+
+        let opcode = self.memory[self.pc];
         match opcode {
             1 => {
-                self.memory[out] = self.memory[in_a] + self.memory[in_b];
+                arith_instruction!(+);
                 true
             }
             2 => {
-                self.memory[out] = self.memory[in_a] * self.memory[in_b];
+                arith_instruction!(*);
                 true
             }
             99 => { false }
