@@ -1,7 +1,7 @@
 use aoc2019::intcode::{IntcodeCpu, parse_intcode_program};
 
 fn main() {
-    let input = include_str!("day2.txt");
+    let input = include_str!("../inputs/day2.txt");
     solve_part1(&input);
     solve_part2(&input);
 }

@@ -1,7 +1,7 @@
 use aoc2019::intcode::{parse_intcode_program, run_with_inputs};
 
 fn main() {
-    let input = include_str!("day5.txt");
+    let input = include_str!("../inputs/day5.txt");
     let memory = parse_intcode_program(input);
 
     let out = run_with_inputs(memory.clone(), vec![1]);

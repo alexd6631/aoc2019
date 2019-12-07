@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 
 fn main() {
-    let input = include_str!("day3.txt");
+    let input = include_str!("../inputs/day3.txt");
 
     let world = run_wires(input);
 

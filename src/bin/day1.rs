@@ -1,7 +1,7 @@
 
 
 fn main() {
-    let input = include_str!("day1.txt");
+    let input = include_str!("../inputs/day1.txt");
     let res = compute_total_mass(input, fuel_for_mass);
     println!("Part 1 : {}", res);
 
