@@ -12,18 +12,22 @@ pub trait Graph {
     fn adjacents(&self, node: &Self::Node) -> Self::Adjacents;
 }
 
-struct NodeHolder<Node, Edge> {
-    node: Node,
-    parent: Option<(Edge, NodeHolderRef<Node, Edge>)>,
+
+#[derive(Debug)]
+pub struct NodeHolder<Node, Edge> {
+    pub node: Node,
+    pub parent: Option<(Edge, NodeHolderRef<Node, Edge>)>,
+    pub depth: usize,
 }
 
 impl<Node, Edge> NodeHolder<Node, Edge> {
-    pub fn new(node: Node, parent: Option<(Edge, NodeHolderRef<Node, Edge>)>) -> Self {
-        NodeHolder { node, parent }
+    pub fn new(node: Node, parent: Option<(Edge, NodeHolderRef<Node, Edge>)>, depth: usize) -> Self {
+        NodeHolder { node, parent, depth }
     }
 }
 
-struct NodeHolderRef<Node, Edge>(Rc<NodeHolder<Node, Edge>>);
+#[derive(Debug)]
+pub struct NodeHolderRef<Node, Edge>(pub Rc<NodeHolder<Node, Edge>>);
 
 impl<Node, Edge> NodeHolderRef<Node, Edge> {
     fn weak(&self) -> Weak<NodeHolder<Node, Edge>> {
@@ -63,11 +67,12 @@ impl<Node, Edge> Borrow<Node> for NodeHolderRef<Node, Edge> {
     }
 }
 
-struct GraphExplorer<G: Graph>
+#[derive(Debug)]
+pub struct GraphExplorer<G: Graph>
 where
     G::Node: Eq + Hash,
 {
-    cache: HashSet<NodeHolderRef<G::Node, G::Edge>>,
+    pub cache: HashSet<NodeHolderRef<G::Node, G::Edge>>,
     queue: VecDeque<NodeHolderRef<G::Node, G::Edge>>,
 }
 
@@ -89,7 +94,8 @@ where
     }
 }
 
-pub fn bfs<G, F>(graph: &G, initial_node: G::Node, is_done: F) -> Option<Vec<(G::Edge, G::Node)>>
+pub fn bfs<G, F>(graph: &G, initial_node: G::Node, is_done: F) ->
+(GraphExplorer<G>, Option<Vec<(G::Edge, G::Node)>>)
 where
     G: Graph,
     G::Node: Eq + Hash + Clone + Debug,
@@ -98,22 +104,23 @@ where
 {
     let mut explorer: GraphExplorer<G> = GraphExplorer::new();
 
-    explorer.enqueue(NodeHolder::new(initial_node, None));
+    explorer.enqueue(NodeHolder::new(initial_node, None, 0));
     while let Some(node_holder) = explorer.queue.pop_front() {
         if is_done(&node_holder.0.node) {
             //            println!("Explored states : {}", explorer.cache.len());
-            return Some(backtrack(node_holder));
+            return (explorer, Some(backtrack(node_holder)));
         }
         for (edge, next_node) in graph.adjacents(&node_holder.0.node) {
             if !explorer.cache.contains(&next_node) {
                 explorer.enqueue(NodeHolder::new(
                     next_node,
                     Some((edge, node_holder.clone())),
+                    node_holder.0.depth + 1
                 ));
             }
         }
     }
-    None
+    (explorer, None)
 }
 
 fn backtrack<Node, Edge>(holder: NodeHolderRef<Node, Edge>) -> Vec<(Edge, Node)>
