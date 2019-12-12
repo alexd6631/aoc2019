@@ -2,7 +2,9 @@ mod instruction;
 mod cpu;
 
 pub use cpu::IntcodeCpu;
-use instruction::{Input, Instruction, Int, decode_instruction};
+use instruction::{Input, Instruction, decode_instruction};
+pub use instruction::Int;
+use std::collections::VecDeque;
 
 pub fn parse_intcode_program(input: &str) -> Vec<Int> {
     input

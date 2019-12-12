@@ -1,21 +1,36 @@
 use crate::intcode::instruction::{Input, Instruction, Int, decode_instruction};
+use std::collections::VecDeque;
 
 #[derive(Debug)]
 pub struct IntcodeCpu {
     pub memory: Vec<Int>,
     pub pc: usize,
 
-    pub inputs: Vec<Int>,
+    pub inputs: VecDeque<Int>,
     pub outputs: Vec<Int>,
+
+    pub is_halted: bool
 }
 
 impl IntcodeCpu {
     pub fn new_with_inputs(memory: Vec<Int>, inputs: Vec<Int>) -> Self {
-        IntcodeCpu { memory, pc: 0, inputs, outputs: Vec::new() }
+        IntcodeCpu {
+            memory,
+            pc: 0,
+            inputs: VecDeque::from(inputs),
+            outputs: Vec::new(),
+            is_halted: false
+        }
     }
 
     pub fn new(memory: Vec<Int>) -> Self {
-        IntcodeCpu { memory, pc: 0, inputs: Vec::new(), outputs: Vec::new() }
+        IntcodeCpu {
+            memory,
+            pc: 0,
+            inputs: VecDeque::new(),
+            outputs: Vec::new(),
+            is_halted: false
+        }
     }
 }
 
@@ -45,9 +60,13 @@ impl IntcodeCpu {
                 true
             }
             Instruction::In { addr } => {
-                self.memory[addr] = self.inputs.pop().expect("Input buffer is empty");
-                self.pc += 2;
-                true
+                if let Some(input) = self.inputs.pop_front() {
+                    self.memory[addr] = input;
+                    self.pc += 2;
+                    true
+                } else {
+                    false
+                }
             }
             Instruction::Out { addr } => {
                 self.outputs.push(self.input_value(addr));
@@ -84,7 +103,10 @@ impl IntcodeCpu {
                 self.pc += 4;
                 true
             }
-            Instruction::Halt => false,
+            Instruction::Halt => {
+                self.is_halted = true;
+                false
+            },
         }
     }
 
