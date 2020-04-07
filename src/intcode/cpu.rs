@@ -1,7 +1,7 @@
 use crate::intcode::instruction::{Input, Instruction, Int, decode_instruction, Output};
 use std::collections::VecDeque;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct IntcodeCpu {
     pub memory: Vec<Int>,
     pub pc: usize,
