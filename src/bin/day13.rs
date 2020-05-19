@@ -68,7 +68,7 @@ impl Game {
 }
 
 impl Display for Game {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "Score: {}", self.score)?;
         writeln!(f)?;
         for i in 0..21 {
@@ -94,7 +94,7 @@ fn char_for_code(c: Int) -> char {
 
 fn part2(input: &str) {
     let program = parse_intcode_program(input);
-    let cpu = IntcodeCpu::new_with_inputs_and_large_mem(64_000, program, vec![]);
+    let cpu = IntcodeCpu::new_with_inputs_and_large_mem(8000, program, vec![]);
     let mut game = Game::new(cpu);
     game.start();
 
