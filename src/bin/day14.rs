@@ -84,7 +84,7 @@ impl<'a> Solver<'a> {
             times += 1;
         }
         for (n, e) in &rule.required {
-            self.required.push_back((n * times, &e))
+            self.required.push_back((n * times, e))
         }
         if has_remaining {
             let remaining = rule.produced * times - goal_qty;

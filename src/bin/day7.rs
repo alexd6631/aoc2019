@@ -14,7 +14,7 @@ fn main() {
 }
 
 fn max_signal_for_settings(program: &Vec<Int>) -> Int {
-    [0i32, 1, 2, 3, 4].iter().permutations(5).map(|p| {
+    [0i64, 1, 2, 3, 4].iter().permutations(5).map(|p| {
         let vec: Vec<Int> = p.iter().map(|n| **n).collect();
         signal_for_settings(&(vec), program)
     }).max().unwrap()
@@ -27,7 +27,7 @@ fn signal_for_settings(phase_settings: &[Int], program: &Vec<Int>) -> Int {
 }
 
 fn max_signal_for_settings_part_2(program: &Vec<Int>) -> Int {
-    [5i32, 6, 7, 8, 9].iter().permutations(5).map(|p| {
+    [5i64, 6, 7, 8, 9].iter().permutations(5).map(|p| {
         let vec: Vec<Int> = p.iter().map(|n| **n).collect();
         signal_for_settings_part2(&(vec), program)
     }).max().unwrap()
