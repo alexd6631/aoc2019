@@ -26,14 +26,14 @@ enum Block {
 }
 
 impl Block {
-    fn is_path(&self) -> bool {
+    fn is_path(self) -> bool {
         match self {
             Block::Path => true,
             _ => false
         }
     }
 
-    fn is_goal(&self) -> bool {
+    fn is_goal(self) -> bool {
         match self {
             Block::Goal => true,
             _ => false
@@ -115,7 +115,6 @@ impl Drone {
         };
         (new_block, new_pos)
     }
-
 }
 
 fn solve_part_1() {
@@ -131,7 +130,7 @@ fn solve_part_1() {
             let (new_block, new_pos) = drone.try_move(m);
             world.blocks.insert(new_pos, new_block);
             if new_block.is_goal() {
-                get_path_to_objective(&mut world, drone.pos);
+                print_path_to_objective(&world, drone.pos);
                 return;
             }
         }
@@ -171,7 +170,7 @@ fn explore_all_map(drone: &mut Drone, world: &mut World) -> (i32, i32) {
     goal
 }
 
-fn get_path_to_objective(world: &World, goal: (i32, i32)) {
+fn print_path_to_objective(world: &World, goal: (i32, i32)) {
     println!("Found objective ! {:?}", goal);
     let path = bfs_alt(world, (0, 0), |_, n| {
         n == &goal
