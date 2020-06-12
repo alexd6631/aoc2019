@@ -1,5 +1,3 @@
-use itertools::Itertools;
-
 #[derive(Debug)]
 struct Ingredient {
     name: String,
@@ -23,31 +21,31 @@ impl Ingredient {
 fn parse_ingredients(input: &str) -> Vec<Ingredient> {
     input.lines()
         .map(|l| {
-            let parts: Vec<&str> = l.split(":").collect_vec();
+            let parts: Vec<&str> = l.split(":").collect();
             let name = parts[0];
-            let props: Vec<&str> = parts[1].split(",").collect_vec();
-            let props = props.iter()
+            let props: Vec<&str> = parts[1].split(",").collect();
+            let props: Vec<i32> = props.iter()
                 .map(|p| p.trim().split_whitespace().nth(1).unwrap())
                 .map(|p| p.parse::<i32>().unwrap())
-                .collect_vec();
+                .collect();
 
             Ingredient::new(
                 name.to_owned(),
                 props[0], props[1], props[2], props[3], props[4],
             )
-        }).inspect(|p| println!("{:?}", p)).collect_vec()
+        }).collect()
 }
 
 type Coefficients = [i32; 4];
 
-fn coefficients(n: i32) -> impl Itertools<Item=Coefficients> {
+fn coefficients(n: i32) -> impl Iterator<Item=Coefficients> {
     (0..=n).flat_map(move |a| (0..=n - a)
         .flat_map(move |b| (0..=n - a - b)
             .map(move |c| [a, b, c, n - a - b - c])))
 }
 
 fn score(ingredients: &[Ingredient], coefficients: &Coefficients) -> i32 {
-    let ingredients_props = ingredients.iter().map(|i| i.props()).collect_vec();
+    let ingredients_props: Vec<_> = ingredients.iter().map(|i| i.props()).collect();
 
     (0..4)
         .map(|i| {
