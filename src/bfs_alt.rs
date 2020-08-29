@@ -7,13 +7,13 @@ use std::any::Any;
 
 type Index = i32;
 
-pub fn bfs_alt<G, F>(graph: &G, initial_node: G::Node, is_done: F)
+pub fn bfs_alt<G, F>(graph: &G, initial_node: G::Node, mut is_done: F)
     -> Option<Vec<G::Edge>>
     where
         G: Graph,
         G::Node: Eq + Hash + Clone,
         G::Edge: Clone + Debug,
-        F: Fn(&G, &G::Node) -> bool,
+        F: FnMut(&G, &G::Node) -> bool,
 {
 
 
